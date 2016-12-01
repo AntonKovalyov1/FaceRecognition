@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.shape.*?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="kovalyov_anton_finalproject02.FXMLTrainingController">
+               <top>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Training Operations" BorderPane.alignment="CENTER" />
+               </top>
+               <left>
+                  <VBox prefWidth="400.0" spacing="5.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <HBox>
+                           <children>
+                              <Label prefWidth="180.0" text="Set Directory: " />
+                              <TextField fx:id="tfTrainDirectory" />
+                           </children>
+                        </HBox>
+                        <HBox>
+                           <children>
+                              <Label prefWidth="180.0" text="Number of Eigenfaces: " />
+                              <TextField fx:id="tfNumberOfEigenfaces" />
+                           </children>
+                        </HBox>
+                        <Button mnemonicParsing="false" onAction="#trainAndSaveDirectory" text="Train &amp; Save" />
+                        <TextArea editable="false" prefHeight="180.0" prefWidth="390.0" text="The input directory must contain images of jpg format that are of equal dimensions. The parent directory of the images should contain the name of the person in the images so it can be identified in the Face Recognition phase. &#10;If no input, or invalid input is entered for the number of eigengaces, the maximum possible number will be used." wrapText="true" />
+                     </children>
+                     <padding>
+                        <Insets left="10.0" top="20.0" />
+                     </padding>
+                  </VBox>
+               </left>
+               <center>
+                  <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <Label alignment="CENTER" text="Trained Directories" textAlignment="CENTER" />
+                        <ListView fx:id="lvTrainingLocations" />
+                        <HBox fx:id="hbSelectedTraining" spacing="10.0">
+                           <children>
+                              <Button fx:id="btDeleteTraining" mnemonicParsing="false" onAction="#deleteTrainingSet" text="Delete" />
+                              <Text fx:id="tTrainingInfo" strokeType="OUTSIDE" strokeWidth="0.0">
+                                 <HBox.margin>
+                                    <Insets top="5.0" />
+                                 </HBox.margin>
+                              </Text>
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                     </padding>
+                  </VBox>
+               </center>
+               <right>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="EigenFaces: " />
+                        <ScrollPane hbarPolicy="NEVER" prefHeight="1000.0" prefWidth="320.0" vbarPolicy="ALWAYS" BorderPane.alignment="CENTER">
+                           <content>
+                              <VBox fx:id="vbDisplayEigenFaces" />
+                           </content></ScrollPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="20.0" right="20.0" top="20.0" />
+                     </padding>
+                  </VBox>
+               </right>
+            </BorderPane>
