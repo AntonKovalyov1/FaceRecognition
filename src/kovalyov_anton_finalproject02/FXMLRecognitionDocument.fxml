@@ -17,7 +17,7 @@
          </BorderPane.margin></Text>
    </top>
    <bottom>
-      <Text strokeType="OUTSIDE" strokeWidth="0.0" BorderPane.alignment="BOTTOM_LEFT" />
+      <Text fx:id="tInfo" strokeType="OUTSIDE" strokeWidth="0.0" BorderPane.alignment="BOTTOM_LEFT" />
    </bottom>
    <left>
       <VBox spacing="5.0" BorderPane.alignment="CENTER">

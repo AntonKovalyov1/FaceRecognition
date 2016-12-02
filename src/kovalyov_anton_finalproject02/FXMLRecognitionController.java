@@ -15,6 +15,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -35,6 +37,9 @@ public class FXMLRecognitionController implements Initializable {
     
     @FXML
     private ImageView recognizedImageView;
+    
+    @FXML
+    private Text tInfo;
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -57,48 +62,80 @@ public class FXMLRecognitionController implements Initializable {
     }
     
     @FXML
-    private void recognize() {
-        ImageView temp = new ImageView(selectedImageView.getImage());
-        temp.setFitWidth(ed.getImageWidth());
-        temp.setFitHeight(ed.getImageHeight());
-        SnapshotParameters parameters = new SnapshotParameters();
-        parameters.setFill(Color.TRANSPARENT);
-        parameters.setViewport(new Rectangle2D(0, 0, ed.getImageWidth(), ed.getImageHeight()));
-        WritableImage wi = new WritableImage(ed.getImageWidth(), ed.getImageHeight());
-        temp.snapshot(parameters, wi);
-        
-        BufferedImage bfImage = ImageIo.toGray(ImageToBufferedImage.getBufferedImage(wi));
-        double[][] imageArray = new double[1][];
-        byte[] imageByteArray = ImageIo.getGrayByteImageArray1DFromBufferedImage(bfImage);
-        imageArray[0] = ArrayOperations.scale1DbyteTo1Ddouble(imageByteArray);
-
-        Algebra a = new Algebra();
-        DenseDoubleMatrix2D imageMatrix = new DenseDoubleMatrix2D(imageArray);
-        DoubleMatrix2D weightsMatrix = a.mult(imageMatrix, a.transpose(new DenseDoubleMatrix2D(ed.getEigenFaces())));
-        double[][] weights = weightsMatrix.toArray();
-        double[] distances = new double[ed.getFaces().size()];
-        
-        for (int i = 0; i < distances.length; i++) {
-            distances[i] = MathOperations.getEuclidianDistance(weights[0], ed.getFaces().get(i).getWeights());
+    protected void recognize() {
+        // Make sure the selected image is not null
+        Image image = selectedImageView.getImage();
+        if (image == null)
+            return;
+        try {
+            // Make sure the image to be recognized is scaled to the right sizes
+            // using a temporary imageview and viewport snapshot
+            int width = ed.getImageWidth(), height = ed.getImageHeight();
+            ImageView temp = new ImageView(image);
+            temp.setFitWidth(width);
+            temp.setFitHeight(height);
+            SnapshotParameters parameters = new SnapshotParameters();
+            parameters.setFill(Color.TRANSPARENT);
+            parameters.setViewport(new Rectangle2D(0, 0, width, height));
+            WritableImage wi = new WritableImage(width, height);
+            temp.snapshot(parameters, wi);
+            
+            // Get the gray double1Darray from the image
+            BufferedImage bfImage = ImageIo.toGray(ImageToBufferedImage.getBufferedImage(wi));
+            double[][] imageArray = new double[1][];
+            byte[] imageByteArray = ImageIo.getGrayByteImageArray1DFromBufferedImage(bfImage);
+            imageArray[0] = ArrayOperations.scale1DbyteTo1Ddouble(imageByteArray);
+            
+            // Get the weights using the formula image matrix * eigenfaces transposed
+            Algebra a = new Algebra();
+            DenseDoubleMatrix2D imageMatrix = new DenseDoubleMatrix2D(imageArray);
+            DoubleMatrix2D weightsMatrix = a.mult(imageMatrix, a.transpose(new DenseDoubleMatrix2D(ed.getEigenFaces())));
+            double[][] weights = weightsMatrix.toArray();
+            
+            // Compute the euclidian distances of the current image from the images in the database
+            double[] distances = new double[ed.getFaces().size()];
+            for (int i = 0; i < distances.length; i++) {
+                distances[i] = MathOperations.getEuclidianDistance(weights[0], ed.getFaces().get(i).getWeights());
+            }
+            
+            // Get the minimum distance and compare it to threshold
+            int minDistanceIndex = MathOperations.getMinIndexFromDoubleArray(distances);
+            String closestImageLocation = ed.getFaces().get(minDistanceIndex).getLocation();
+            if (distances[minDistanceIndex] > ed.getThreshold()) {
+                tName.setText("Unknown");
+                recognizedImageView.setImage(selectedImageView.getImage());
+            }
+            else {
+                tName.setText(ed.getFaces().get(minDistanceIndex).getName());
+                recognizedImageView.setImage(new Image("file:///" + ed.getFaces().get(minDistanceIndex).getLocation()));
+            }
+            tInfo.setText("Closest image location is " + closestImageLocation + 
+                    ", distance is " + distances[minDistanceIndex] + ", threshold is " + ed.getThreshold());
         }
-        int minDistanceIndex = MathOperations.getMinIndexFromDoubleArray(distances);
-        System.out.println("Threshold " + ed.getThreshold() + ", image closest distance " + distances[minDistanceIndex]);
-
-        if (distances[minDistanceIndex] > ed.getThreshold()) {
-            tName.setText("Unknown");
-            recognizedImageView.setImage(selectedImageView.getImage());
-        }
-        else {
-            tName.setText(ed.getFaces().get(minDistanceIndex).getName());
-            recognizedImageView.setImage(new Image("file:///" + ed.getFaces().get(minDistanceIndex).getLocation()));
+        // The eigen decomposition is not selected or the training set is corrupted
+        catch (Exception ex) {
+            recognizedImageView.setImage(null);
+            tName.setText("");
+            tInfo.setText("");
+            errorAlert("Recognition not possible", "The training set is either not selected or corrupted");
         }
     }
     
     @FXML
-    private void loadImage() {
+    protected void loadImage() {
         ImageChooser chooser = new ImageChooser();
         chooser.newImage();
-        selectedImageView.setImage(chooser.getImage());
+        if (chooser.getImage() != null)
+            selectedImageView.setImage(chooser.getImage());
+    }
+    
+    private void errorAlert(String s1, String s2) {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle("Error Dialog");
+        alert.setHeaderText(s1);
+        alert.setContentText(s2);
+
+        alert.showAndWait();
     }
 
     /**

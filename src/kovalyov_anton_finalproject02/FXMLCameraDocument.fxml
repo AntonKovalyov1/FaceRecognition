@@ -21,11 +21,8 @@
                      <children>
                         <Button fx:id="button" mnemonicParsing="false" onAction="#startCamera" prefWidth="140.0" text="Start Live Camera" />
                         <Button mnemonicParsing="false" onAction="#capture" prefWidth="140.0" text="Capture Image" />
-                        <HBox prefHeight="100.0" prefWidth="200.0">
-                           <children>
-                              <CheckBox fx:id="grayscale" mnemonicParsing="false" text="Black/White" />
-                           </children>
-                        </HBox>
+            <CheckBox mnemonicParsing="false" text="Face Detection" />
+                        <CheckBox fx:id="grayscale" mnemonicParsing="false" text="Black/White" />
                      </children>
                      <padding>
                         <Insets left="10.0" />
@@ -53,6 +50,7 @@
                                           </Group>
                                           <VBox prefWidth="200.0" spacing="5.0">
                                              <children>
+                                    <Button fx:id="btRecognize" mnemonicParsing="false" prefWidth="160.0" text="Recognize" />
                                                 <Button mnemonicParsing="false" onAction="#saveImage" prefWidth="160.0" text="Save Image" />
                                                 <HBox prefWidth="200.0" spacing="5.0">
                                                    <children>
@@ -61,7 +59,7 @@
                                                       <TextField fx:id="tfHeight" prefWidth="72.0" promptText="height" />
                                                    </children>
                                                 </HBox>
-                                                <Button mnemonicParsing="false" onAction="#deleteImage" prefWidth="160.0" text="Delete Image" />
+                                                <Button minWidth="160.0" mnemonicParsing="false" onAction="#deleteImage" prefWidth="160.0" text="Delete Image" />
                                                 <Button mnemonicParsing="false" onAction="#undoCrop" prefWidth="160.0" text="Undo Crop" />
                                                 <TextArea editable="false" prefHeight="200.0" prefWidth="200.0" text="To crop an image press on it and drag. The cropped image will be scaled to a 128 * 128 pixels image once it is saved unless other acceptable values are entered as width and height." wrapText="true" />
                                              </children>

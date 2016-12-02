@@ -76,6 +76,8 @@ public class FXMLCameraController {
     @FXML
     private TextField tfHeight;
     // the timer for the video
+    @FXML
+    private Button btRecognize;
     private ScheduledExecutorService timer;
     // the OpenCV object that realizes the video capture
     private VideoCapture capture;
@@ -394,5 +396,19 @@ public class FXMLCameraController {
      */
     public ImageView getEditableView() {
         return editableView;
+    }
+
+    /**
+     * @return the btRecognize
+     */
+    public Button getBtRecognize() {
+        return btRecognize;
+    }
+
+    /**
+     * @param btRecognize the btRecognize to set
+     */
+    public void setBtRecognize(Button btRecognize) {
+        this.btRecognize = btRecognize;
     }
 }

@@ -9,11 +9,10 @@ import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
@@ -85,13 +84,17 @@ public class FinalProjectGUI extends Stage {
             setMaximized(true);
             show();
             
-            tp.getSelectionModel().selectedItemProperty().addListener((ov, oldTab, newTab) -> {
-                if (newTab == tabRecog) {
-                    recogController.setSelectedImageView(cameraController.getEditableView());
-                    recogController.setEd(trainingController.getEd());
-                    recogController.setRecognizedImageView(null);
-                    recogController.settName("");
-                }
+            Button btRecognize = cameraController.getBtRecognize();
+            SingleSelectionModel<Tab> selectionModel = tp.getSelectionModel();
+            
+            tabRecog.selectedProperty().addListener(e -> {
+                recogController.setEd(trainingController.getEd());
+            });
+            
+            btRecognize.setOnAction(e -> {
+                recogController.setSelectedImageView(cameraController.getEditableView());
+                selectionModel.select(2);
+                recogController.recognize();
             });
         }
         catch (IOException ex) {
