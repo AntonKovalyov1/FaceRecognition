@@ -37,6 +37,8 @@ public class EigenDecomposition implements java.io.Serializable {
     private int imageHeight;
     // the threshold for face recognition
     private double threshold;
+    
+    private double[] meanImageArray;
 
     public EigenDecomposition() {
         
@@ -69,12 +71,15 @@ public class EigenDecomposition implements java.io.Serializable {
         }
         // Get the double2DArray using the ArrayOperations class
         double[][] doubleArray = ArrayOperations.scale2DbyteTo2Ddouble(byteArray);
+        
+        meanImageArray = ArrayOperations.getAverageArrayFrom2DArray(doubleArray);
+        
         // Get the meanSubtractedArray using the ArrayOperations class
         double[][] meanSubtractedArray = ArrayOperations.getMeanSubtracted2DArray(doubleArray);
         // Finally everything is ready for Eigen Decomposition using the Colt library
         Algebra a = new Algebra();
         DoubleMatrix2D correlationMatrix = a.mult(new DenseDoubleMatrix2D(meanSubtractedArray), a.transpose(new DenseDoubleMatrix2D(meanSubtractedArray))); 
-        DoubleMatrix2D imagesMatrix = new DenseDoubleMatrix2D(doubleArray);
+        DoubleMatrix2D imagesMatrix = new DenseDoubleMatrix2D(meanSubtractedArray);
         EigenvalueDecomposition eigenDecomp = new EigenvalueDecomposition(correlationMatrix);
 	DoubleMatrix2D eigenVectorMatrix = eigenDecomp.getV();
 	DoubleMatrix1D eigenValues = eigenDecomp.getRealEigenvalues();
@@ -87,7 +92,7 @@ public class EigenDecomposition implements java.io.Serializable {
         eigenfacesScaled = ArrayOperations.scale2DdoubleTo2Dbyte(eigenfaces);
         // Get the weights 2d array where each row is of size n and it corresponds
         // to an image from the used directory
-        DoubleMatrix2D weightsMatrix = a.mult(new DenseDoubleMatrix2D(doubleArray), a.transpose(eigenfacesMatrix));
+        DoubleMatrix2D weightsMatrix = a.mult(new DenseDoubleMatrix2D(meanSubtractedArray), a.transpose(eigenfacesMatrix));
         double[][] weights2DArray = weightsMatrix.toArray();
         // And the last step is to populate the faces list with faces objects that
         // contain the names, locations and weights of each image
@@ -102,7 +107,6 @@ public class EigenDecomposition implements java.io.Serializable {
         }
         
         computeThreshold();
-        System.out.println("The threshold is: " + threshold);
     }
     
     /**
@@ -242,5 +246,19 @@ public class EigenDecomposition implements java.io.Serializable {
      */
     public double getThreshold() {
         return threshold;
+    }
+
+    /**
+     * @return the meanImageArray
+     */
+    public double[] getMeanImageArray() {
+        return meanImageArray;
+    }
+
+    /**
+     * @param meanImageArray the meanImageArray to set
+     */
+    public void setMeanImageArray(double[] meanImageArray) {
+        this.meanImageArray = meanImageArray;
     }
 }
