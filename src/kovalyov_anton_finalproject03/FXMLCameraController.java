@@ -225,6 +225,8 @@ public class FXMLCameraController {
                 // Add the selected image to stack
                 stack.add(capturedView.getImage());
                 editableView.setImage(stack.peek());
+                // Check if the grayscale checkbox was selected
+                grayOrColor();
                 if (!hbMain.getChildren().contains(hbSelected)) {
                     hbMain.getChildren().add(hbSelected);
                 }
