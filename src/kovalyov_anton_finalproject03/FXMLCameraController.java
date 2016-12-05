@@ -450,7 +450,7 @@ public class FXMLCameraController {
         for (int i = 0; i < rect.length; i++) {
             // The default rectangle is a square, by trial and error I tried to approximate it
             // to a more face like shape
-            rect[i] = new Rect(rect[i].x + 20, rect[i].y, rect[i].width - 40, rect[i].height - 10);
+            rect[i] = new Rect(rect[i].x + 20, rect[i].y, rect[i].width - 40, rect[i].height - 6);
             Imgproc.rectangle(frame, new Point(rect[i].x, rect[i].y), new Point(rect[i].x +
                     rect[i].width, rect[i].y + rect[i].height), new Scalar(0, 0, 255), 2);
             rect[i] = new Rect(rect[i].x + 2, rect[i].y + 2, rect[i].width - 4, rect[i].height - 4);
